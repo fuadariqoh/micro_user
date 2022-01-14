@@ -8,6 +8,8 @@ module.exports = async (req, res) => {
     email: 'email|empty:false',
     password: 'string|min:6'
   }
+  
+  console.log("masuk micro user",req.body)
 
   const validate = v.validate(req.body, schema);
   if (validate.length) {
@@ -16,10 +18,14 @@ module.exports = async (req, res) => {
       message: validate
     });
   }
+  
+  console.log("lewat validate")
 
   const user = await User.findOne({
     where: { email: req.body.email }
   });
+  
+  console.log(user,"user @ micro_user")
 
   if (!user) {
     return res.status(404).json({
@@ -27,6 +33,8 @@ module.exports = async (req, res) => {
       message: 'user not found'
     });
   }
+  
+  console.log(req.body.password,user.password)
 
   const isValidPassword = await bcrypt.compare(req.body.password, user.password);
   if (!isValidPassword) {
